@@ -141,11 +141,9 @@ abstract class FRAMEWORK
     }
     
 	protected function _checkAPIKey(){
-		//$apiKey = 'sRm5ITgBi0dDev'; //--for development
-		$apiKey = 'test'; //--for production
+		$apiKey = 'secret'; 
 		if(isset($this->apiKey) && $this->apiKey == $apiKey){
             $this->key_valid = true; 
-			//$this->_setProjectPath();
         }else{
 			$this->_response("Invalid API Key", 401);
 			die();
@@ -170,26 +168,6 @@ abstract class FRAMEWORK
 		echo $response;
         //return json_encode($data);
     }
-    
-    private function _injectHeader($html){
-    	return $html;
-    }
-	
-	protected function _authenticateToken($token){
-			$stmt = $this->db->prepare("SELECT id FROM users WHERE user_token=:user_token AND user_type != 'removed' ");
-			$stmt->bindValue(':user_token', $token);
-			$stmt->execute();
-			$result = $stmt->fetch();
-			
-			if(count($result) == 0){
-				$result=array();
-				$result['loggedOut'] = true;
-				$this->_response($result);
-			}else{
-				return $result['id'];
-			}
-	}
-
 
     private function _cleanInputs($data) {
         $clean_input = Array();
@@ -203,12 +181,6 @@ abstract class FRAMEWORK
         }
         return $clean_input;
     }
-	
-	private function _logError($logname, $log){
-		$log = "[".date('H:i:s')."]: ".$log;
-		file_put_contents('./log/error/'.$logname.date("j.n.Y").'.txt', $log.PHP_EOL, FILE_APPEND);
-	}
-	
 
     private function _requestStatus($code) {
         $status = array(  
