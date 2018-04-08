@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="https://github.com/popdroid/Phoenix/blob/master/phoenix.png" />
+  <img width="200px" src="https://github.com/popdroid/Phoenix/blob/master/phoenix.png" />
 </p>
 
 # Phoenix
