@@ -1,3 +1,8 @@
+
+<p align="center">
+  <img src="https://github.com/popdroid/Phoenix/blob/master/phoenix.png" />
+</p>
+
 # Phoenix
 
 Phoenix is a simple MVC framework written in PHP for projects that are ranged from small to middle in size.
