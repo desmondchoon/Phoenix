@@ -32,6 +32,7 @@ class MODEL
     }
 
     public function _getDb($class, $db='default'){
+		$class=$class.'Model';
         if(isset($this->_config[$db])){
             $servername = $this->_config[$db]['servername'];
             $username = $this->_config[$db]['username'];
@@ -50,7 +51,20 @@ class MODEL
         return $model;
     }
 
-    public function _query($query, $mode='all'){
+    public function _nonQuery($query, $mode=null){
+        $stmt = $this->_conn->prepare($query['statement']);
+        if(!empty($query['params'])){
+	        foreach($query['params'] as $k=>$v){
+	            if(!isset($v['type'])){ $v['type'] = PDO::PARAM_STR; }
+	            $stmt->bindParam($k, $v['var'], $v['type']);
+	        }
+        }
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+		return $this->_conn->lastInsertId();
+    }
+	
+	public function _query($query){
         $stmt = $this->_conn->prepare($query['statement']);
         if(!empty($query['params'])){
 	        foreach($query['params'] as $k=>$v){
@@ -61,11 +75,24 @@ class MODEL
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        if($mode == 'all'){
-            return $stmt->fetchAll();
-        }else if($mode == 'first'){
-            return $stmt->fetch();
+        return $stmt->fetch();
+        
+    }
+	
+	public function _queryAll($query){
+        $stmt = $this->_conn->prepare($query['statement']);
+        if(!empty($query['params'])){
+	        foreach($query['params'] as $k=>$v){
+	            if(!isset($v['type'])){ $v['type'] = PDO::PARAM_STR; }
+	            $stmt->bindParam($k, $v['var'], $v['type']);
+	        }
         }
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+
+        return $stmt->fetchAll();
+
     }
     
  }

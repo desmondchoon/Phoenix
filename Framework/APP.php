@@ -43,17 +43,24 @@ class APP extends FRAMEWORK
                 }
             });
             
-            $this->class = new $this->endpoint($this->request, $this->args);
+			$controller_class = $this->endpoint."Controller";
+
+            $this->class = new $controller_class($this->request, $this->endpoint, $this->args);
 			if(!empty($this->args)){
 				if(method_exists($this->class,$this->args[0]."Action")){
 					$func = array_shift($this->args)."Action";
-					$this->class->$func($this->args);
+					$this->class->$func($this->args, $this->query);
 				}else{
-					$this->_response('Not found');
+					if(method_exists($this->class,'indexAction')){
+						
+						$this->class->indexAction($this->args, $this->query);
+					}else{
+						$this->_response('Not found');
+					}
 				}
 			}else{
 				if(method_exists($this->class,'indexAction')){
-					$this->class->indexAction();
+					$this->class->indexAction($this->args, $this->query);
 				}
 			}
         //}

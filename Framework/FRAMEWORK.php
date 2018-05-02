@@ -48,6 +48,11 @@ abstract class FRAMEWORK
      */
      protected $jsonpCallback = '';
 	 
+	 
+     protected $apiKey = '';
+	 
+     protected $token = '';
+	 
 	 /**
      * Property: project path
      * Stores the project path for core
@@ -71,7 +76,7 @@ abstract class FRAMEWORK
      * Constructor: __construct
      * Allow for CORS, assemble and pre-process the data
      */
-    public function __construct($request, $args=NULL) {
+    public function __construct($request, $endpoint=NULL, $args=NULL) {
         //header("Access-Control-Allow-Orgin: *");
         //header("Access-Control-Allow-Methods: *");
         //header("Content-Type: application/json");
@@ -85,24 +90,34 @@ abstract class FRAMEWORK
 		//print_r($request);
 		
         foreach((array)$request as $k => $v){
-			if($k == 'request' && empty($args)){
+			if($k == 'request' && empty($endpoint)){
 				$this->args = explode('/', rtrim($v, '/'));
 			}
-			else if($k == 'key'){
+			else if($k == '_key'){
 				$this->apiKey = $v;
 			}
 			else if($k == 'callback'){
 				$this->jsonpCallback = $v;
+			}
+			else if($k == '_token'){
+				$this->token = $v;
 			}
         }
         
         if(!empty($args)){
             $this->args = $args;
         }
-		if(!empty($this->args)){
-        	$this->endpoint = array_shift($this->args);
+		
+		if(empty($endpoint)){
+			if(!empty($this->args)){
+				$this->endpoint = array_shift($this->args);
+			}else{
+				$discard = array_shift($this->args);
+				$this->endpoint = DEFAULT_CONTROLLER;
+			}
 		}else{
-			$this->endpoint = DEFAULT_CONTROLLER;
+			//$discard = array_shift($this->args);
+			$this->endpoint = $endpoint;
 		}
 		
         $this->method = $_SERVER['REQUEST_METHOD'];
@@ -118,6 +133,8 @@ abstract class FRAMEWORK
 
         switch($this->method) {
         case 'DELETE':
+			$this->request = $this->_cleanInputs($_REQUEST);
+            break;
         case 'POST':
             $this->request = $this->_cleanInputs($_POST);
             break;
@@ -129,8 +146,9 @@ abstract class FRAMEWORK
             $this->file = file_get_contents("php://input");
             break;
         default:
-            $this->_response('Invalid Method', 405);
-            break;
+            $this->_response('', 200);
+			die();
+            //break;
         }
 		
 		foreach((array)$this->request as $k => $v){
@@ -141,9 +159,11 @@ abstract class FRAMEWORK
     }
     
 	protected function _checkAPIKey(){
-		$apiKey = 'secret'; 
+		//$apiKey = 'sRm5ITgBi0dDev'; //--for development
+		$apiKey = 'test'; //--for production
 		if(isset($this->apiKey) && $this->apiKey == $apiKey){
             $this->key_valid = true; 
+			//$this->_setProjectPath();
         }else{
 			$this->_response("Invalid API Key", 401);
 			die();
@@ -168,6 +188,26 @@ abstract class FRAMEWORK
 		echo $response;
         //return json_encode($data);
     }
+    
+    private function _injectHeader($html){
+    	return $html;
+    }
+	
+	protected function _authenticateToken($token){
+			$stmt = $this->db->prepare("SELECT id FROM users WHERE user_token=:user_token AND user_type != 'removed' ");
+			$stmt->bindValue(':user_token', $token);
+			$stmt->execute();
+			$result = $stmt->fetch();
+			
+			if(count($result) == 0){
+				$result=array();
+				$result['loggedOut'] = true;
+				$this->_response($result);
+			}else{
+				return $result['id'];
+			}
+	}
+
 
     private function _cleanInputs($data) {
         $clean_input = Array();
@@ -181,6 +221,12 @@ abstract class FRAMEWORK
         }
         return $clean_input;
     }
+	
+	private function _logError($logname, $log){
+		$log = "[".date('H:i:s')."]: ".$log;
+		file_put_contents('./log/error/'.$logname.date("j.n.Y").'.txt', $log.PHP_EOL, FILE_APPEND);
+	}
+	
 
     private function _requestStatus($code) {
         $status = array(  
@@ -192,4 +238,8 @@ abstract class FRAMEWORK
         ); 
         return ($status[$code])?$status[$code]:$status[500]; 
     }
+
+	private function _authenticate(){
+		
+	}
 }
