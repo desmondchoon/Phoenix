@@ -1,5 +1,5 @@
 {
-    "name": "phoenix/phoenix",
+    "name": "popdroid/phoenix",
     "type": "library",
     "description": "The Phoenix PHP Framework",
     "keywords": ["php","php-framework", "mvc", "framework"],
