@@ -1,6 +1,6 @@
 <?php
 
-class testquery extends MODEL{
+class testModel extends MODEL{
     public function querythis(){
         $query = array();
         $query['statement'] = 'SELECT 1 AS DB_STATUS';

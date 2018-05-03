@@ -26,8 +26,14 @@ class CONTROLLER extends FRAMEWORK{
     }
     
     protected function _service($service){
-		$service = $service."Service";
-    	require_once SERVICE_PATH.'/'.$service.'.php';
+		$servicePath = $service."Service";
+		
+		$serviceExplode = explode('/', $service);
+		end($serviceExplode); 
+		$key = key($serviceExplode); 
+		$service = $serviceExplode[$key]."Service";
+		
+    	require_once SERVICE_PATH.'/'.$servicePath.'.php';
     	return new $service();
     }
 	

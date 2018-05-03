@@ -42,7 +42,7 @@ class MODEL
                 $this->_conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);    
                 $this->_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);      
             }catch(PDOException $e)    {    
-                $this->_response('Database Connect Fail');
+                die($e);
             }
         }else{
             throw new Exception('Database does not exist');
