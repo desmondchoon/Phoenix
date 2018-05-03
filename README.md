@@ -15,4 +15,6 @@ Phoenix is a simple MVC framework written in PHP for projects that are ranged fr
 
 ## Installation
 Installation is done with Composer. Simply use the line below:
-##### `composer require popdroid/phoenix`
+##### `composer require popdroid/phoenix "*"`
+OR
+##### `composer require popdroid/phoenix "version-number"`
