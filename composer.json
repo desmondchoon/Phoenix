@@ -1,0 +1,19 @@
+{
+    "name": "phoenix/phoenix",
+    "type": "library",
+    "description": "The Phoenix PHP Framework",
+    "keywords": ["php","php-framework", "mvc", "framework"],
+    "homepage": "https://github.com/popdroid/Phoenix",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Desmond Chin Chung Choon",
+            "email": "desmond.chin.cc93@gmail.com",
+            "homepage": "https://desmond.solutions",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+}
