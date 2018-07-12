@@ -30,9 +30,24 @@ if (!array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 
 
 try {
-    //$GETUSER = new GetUser();
-    $APP = new APP($_REQUEST, $_SERVER);
-    $APP->callAPP();
+    if(isset($_REQUEST['url'])){
+		include 'security.php';
+	}else{
+		$APP = new APP($_REQUEST, $_SERVER);
+		$APP->callAPP();
+	}
 } catch (Exception $e) {
     echo json_encode(Array('error' => $e->getMessage()));
 }
+
+?>
+
+<html>
+	<script>
+		window.onerror = function (message, url, lineNo){
+    	alert('Error: ' + message + '\n' + 'Line Number: ' + lineNo);
+    	return true;
+	}
+	</script>
+	
+</html>

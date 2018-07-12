@@ -92,7 +92,25 @@ class MODEL
 
 
         return $stmt->fetchAll();
-
     }
+	
+	public function createSingleInstance($db){
+		if(isset($this->_config[$db])){
+            $servername = $this->_config[$db]['servername'];
+            $username = $this->_config[$db]['username'];
+            $password = $this->_config[$db]['password'];
+            $database = $this->_config[$db]['database'];
+            try {    
+                $this->_conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);    
+                $this->_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);      
+            }catch(PDOException $e)    {    
+                die($e);
+            }
+        }else{
+            throw new Exception('Database does not exist');
+        }
+        
+        return $this->_conn;
+	}
     
  }

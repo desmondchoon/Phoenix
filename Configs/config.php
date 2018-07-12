@@ -14,3 +14,5 @@ define("DEFAULT_CONTROLLER", "home");
 define("PHOENIX",'Framework');
 
 define("PHOENIX_MODE", "dev");
+
+define("ROOT_PATH", "/popmall/");

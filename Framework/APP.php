@@ -15,21 +15,24 @@ class APP extends FRAMEWORK
      */
     protected $class = Null;
     
+    /**
+     * Property: class
+     * Used to store the security class
+     */
+    protected $_security = null;
+    
      
     public function __construct($request,$origin) {
         parent::__construct($request);
 		
 		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
 		{    
-			$this->requestMethod = 'xhr';
-			//echo 'I AM AJAXED!';
+			$this->_isAjax = true;
 		}
 		
     }
     
-    public function callAPP() {
-        //print_r($this->args);
-        //if($this->key_valid || !isset($this->apiKey)){	
+    public function callAPP() {	
             spl_autoload_register(function($class_name) {
                 $file =  CONTROLLER_PATH . '/' . $class_name . '.php';
                 if(file_exists($file)) {
@@ -42,9 +45,10 @@ class APP extends FRAMEWORK
                     require_once $file;
                 }
             });
-            
-			$controller_class = $this->endpoint."Controller";
 
+			$this->_security = new SECURITY($this->endpoint, $_SERVER);
+
+			$controller_class = $this->endpoint."Controller";
             $this->class = new $controller_class($this->request, $this->endpoint, $this->args);
 			if(!empty($this->args)){
 				if(method_exists($this->class,$this->args[0]."Action")){
@@ -63,7 +67,6 @@ class APP extends FRAMEWORK
 					$this->class->indexAction($this->args, $this->query);
 				}
 			}
-        //}
     }
     
  }

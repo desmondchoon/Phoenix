@@ -70,7 +70,7 @@ abstract class FRAMEWORK
      * Property: string
      * Stores php command to run on shell
      */
-     protected $requestMethod = 'php';
+     protected $_isAjax = false;
 
     /**
      * Constructor: __construct
@@ -85,9 +85,6 @@ abstract class FRAMEWORK
 		header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 		header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 		
-		
-		
-		//print_r($request);
 		
         foreach((array)$request as $k => $v){
 			if($k == 'request' && empty($endpoint)){
@@ -182,7 +179,7 @@ abstract class FRAMEWORK
 			$response = $data;
 		}
 		
-		if($this->method == 'GET' && $this->requestMethod !== 'xhr'){
+		if($this->method == 'GET' && $this->_isAjax == false){
 			$response = $this->_injectHeader($response);
 		}
 		echo $response;
@@ -238,8 +235,4 @@ abstract class FRAMEWORK
         ); 
         return ($status[$code])?$status[$code]:$status[500]; 
     }
-
-	private function _authenticate(){
-		
-	}
 }
