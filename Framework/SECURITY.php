@@ -1,5 +1,4 @@
 <?php
-
 class SECURITY {
     /* Security config */
 
@@ -30,18 +29,14 @@ class SECURITY {
     protected function authenticate($server) {
         $tokenField = $this->_config['tokenization']['server_name'];
         $this->startUserDbInstance();
-        if (!empty($server['HTTP_X_REQUESTED_WITH']) && strtolower($server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            if (isset($server[$tokenField])) {
-                $this->check($_SERVER[$tokenField], true);
-            } else {
+
+        if(!$this->checkAuth()){
+            if (!empty($server['HTTP_X_REQUESTED_WITH']) && strtolower($server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
                 echo json_encode(array('authentication'=>false));
-                exit;
-            }
-        } else {
-            if(!$this->checkAuth()){
+            }else{
                 $this->redirectLogin();
-                exit;
             }
+            exit;
         }
     }
     
@@ -89,7 +84,7 @@ class SECURITY {
 
     private function startUserDbInstance() {
         $db = new MODEL();
-        $this->_db = $db->createSingleInstance($this->_config['db']['schema']);
+        $this->_db = $db->_getDb('security',$this->_config['db']['schema']);
     }
 
     private function redirectLogin() {
@@ -119,7 +114,7 @@ class SECURITY {
         }
         $password = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $this->_db->prepare("INSERT INTO " . $this->_config['db']['table'] .
-                " (" . $this->_config['db']['username_field'] . "," . $this->_config['db']['password_field'] . "," . $this->_config['db']['user_role_field'] . ") " .
+                " (" . $this->_config['db']['id_field'] . "," . $this->_config['db']['password_field'] . "," . $this->_config['db']['user_role_field'] . ") " .
                 " VALUES ('" . $id . "','" . $password . "','" . $user_role . "') ");
         $stmt->execute();
     }
@@ -129,11 +124,7 @@ class SECURITY {
             $this->startUserDbInstance();
         }
         
-        $stmt = $this->_db->prepare("SELECT * FROM " . $this->_config['db']['table'] . " WHERE " . $this->_config['db']['username_field'] . "='" . $id . "'");
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute();
-        $result = $stmt->fetch();
-        $this->_db = null;
+        $result = $this->_db->getUser($this->_config, $id);
         
         if (empty($result)) {
             return false;

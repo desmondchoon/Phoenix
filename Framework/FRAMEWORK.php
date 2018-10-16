@@ -51,6 +51,7 @@ abstract class FRAMEWORK {
      * Stores the JSONP wrapper string
      */
     protected $jsonpCallback = '';
+    protected $apiKey = '';
     protected $token = '';
 
     /**
@@ -97,9 +98,11 @@ abstract class FRAMEWORK {
         header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 
         foreach ((array) $request as $k => $v) {
-            if ($k == '_request' && empty($endpoint)) {
+            if ($k == 'request' && empty($endpoint)) {
                 $this->args = explode('/', rtrim($v, '/'));
-            } else if ($k == '_callback') {
+            } else if ($k == '_key') {
+                $this->apiKey = $v;
+            } else if ($k == 'callback') {
                 $this->jsonpCallback = $v;
             } else if ($k == '_token') {
                 $this->token = $v;
@@ -174,6 +177,18 @@ abstract class FRAMEWORK {
         $this->_middleware = new MIDDLEWARE($this->_security);
     }
 
+    protected function _checkAPIKey() {
+        //$apiKey = 'sRm5ITgBi0dDev'; //--for development
+        $apiKey = 'test'; //--for production
+        if (isset($this->apiKey) && $this->apiKey == $apiKey) {
+            $this->key_valid = true;
+            //$this->_setProjectPath();
+        } else {
+            $this->_response("Invalid API Key", 401);
+            die();
+        }
+    }
+
     protected function _response($data, $status = 200) {
         header("HTTP/1.1 " . $status . " " . $this->_requestStatus($status));
         if (is_array($data)) {
@@ -190,6 +205,7 @@ abstract class FRAMEWORK {
             //$response = $this->_injectHeader($response);
         }
         echo $response;
+        if($status !== 200){ exit; }
         //return json_encode($data);
     }
 

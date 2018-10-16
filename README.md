@@ -12,7 +12,6 @@ Phoenix is a simple MVC framework written in PHP for projects that are ranged fr
 - Centralized templating.
 - Services extension for controller logics.
 - Multi database connections.
-- Security built-in for authentication and access roles. Security authentication are none-session tokenization to improve efficiency.
 
 ## Installation
 Installation is done with Composer. Simply use the line below:

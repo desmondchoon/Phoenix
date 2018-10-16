@@ -19,7 +19,6 @@ class VIEW {
         
         if (!empty($this->_template)) {
             $template_file = file_get_contents(TEMPLATE_PATH . '/' . $this->_template . ".html");
-            //$template_file = $this->processTemplate($template_file);
             $view_file = str_replace('{%contents%}', $view_file, $template_file);  
         }
         
@@ -34,8 +33,10 @@ class VIEW {
         
         $view_file = $this->mapControllers($view_file);
         $view_file = $this->mapRedirects($view_file);
-        
-        $view_file =str_replace(array("\r", "\n"), '', $view_file);        
+        $view_file = $this->cleanUpTags($view_file);
+        if(PHOENIX_MODE == 'prod'){
+            $view_file =str_replace(array("\r", "\n"), '', $view_file);        
+        }
         return $view_file;
     }
 
@@ -52,11 +53,19 @@ class VIEW {
         }
         return $template;
     }
+    
+    private function cleanUpTags($template){
+        if (preg_match_all("~\{\%\s*(.*?)\s*\%\}~", $template, $arr)) {
+            foreach ($arr[0] as $k => $v) {
+                $template = str_replace($v, '""', $template);
+            }
+        }
+        return $template;
+    }
 
     private function mapRedirects($template) {
         if (preg_match_all("~\{\_\s*(.*?)\s*\_\}~", $template, $arr)) {
             foreach ($arr[1] as $k => $v) {
-                //echo $v;
                 $completeLink = ROOT_PATH . $v;
                 $template = str_replace('{_' . $v . '_}', $completeLink, $template);
             }

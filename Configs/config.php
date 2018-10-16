@@ -11,8 +11,12 @@ define("TEMPLATE_PATH",'Application/Views/Templates');
 
 define("DEFAULT_CONTROLLER", "home");
 
+/*Core framework folder*/
 define("PHOENIX",'Framework');
 
 define("PHOENIX_MODE", "dev");
 
-define("ROOT_PATH", "/popmall/");
+/*DATABASE Connection can be of 'default' or 'ssh'*/
+define("DATABASE_CONNECTION_TYPE", "default");
+
+define("ROOT_PATH", "/");

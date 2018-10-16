@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Description of api
- *
- * @author DESMOND
- */
 require_once 'FRAMEWORK.php';
 class APP extends FRAMEWORK {
 
@@ -23,23 +18,6 @@ class APP extends FRAMEWORK {
     }
 
     public function callAPP() {
-        //print_r($this->args);
-        //if($this->key_valid || !isset($this->apiKey)){	
-        spl_autoload_register(function($class_name) {
-            $file = CONTROLLER_PATH . '/' . $class_name . '.php';
-            if (file_exists($file)) {
-                require_once $file;
-            }
-        });
-        spl_autoload_register(function($class_name) {
-            $file = MODEL_PATH . '/' . $class_name . '.php';
-            if (file_exists($file)) {
-                require_once $file;
-            }
-        });
-        
-
-
 
         $controller_class = $this->endpoint . "Controller";
 
@@ -70,7 +48,6 @@ class APP extends FRAMEWORK {
                 exit;
             }
         }
-        //}
     }
 
 }
